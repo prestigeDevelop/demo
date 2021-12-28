@@ -25,10 +25,15 @@ public class RegistrationController {
             MediaType.APPLICATION_JSON_VALUE
     } )
     ResponseEntity<AppUser> register(@RequestBody RegistrationRequest registrationRequest){
-
-
               return new ResponseEntity<>( registrationService.register(registrationRequest), HttpStatus.CREATED );
+    }
 
+    @GetMapping( value = "/userConfirmed/{token}", produces = {
+            MediaType.APPLICATION_JSON_VALUE
+    } )
+    ResponseEntity<String> confirmEmail(@PathVariable String token){
+        String url="http://localhost:8080/api/v1/registration/userConfirmed/"+token;
+        return new ResponseEntity<>( url, HttpStatus.CREATED );
     }
 
 
@@ -93,7 +98,7 @@ public class RegistrationController {
 
        // ErrorCode error = ErrorCode.SYSTEM_ERROR;
         ErrorResponse resp =
-                new ErrorResponse( LocalDateTime.now(), "Internal Server Error", ex.toString(), ex.getMessage() );
+                new ErrorResponse( LocalDateTime.now(), "500 Internal Server Error", ex.toString(), ex.getMessage() );
 
         return resp;
     }

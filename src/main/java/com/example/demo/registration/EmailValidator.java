@@ -1,5 +1,7 @@
 package com.example.demo.registration;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Predicate;
@@ -9,4 +11,5 @@ public class EmailValidator implements Predicate<String> {
     public boolean test(String s) {
         return true;
     }
+
 }

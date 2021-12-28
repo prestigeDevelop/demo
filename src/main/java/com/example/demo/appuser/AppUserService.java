@@ -1,16 +1,26 @@
 package com.example.demo.appuser;
 
+import com.example.demo.email.EmailService;
+import com.example.demo.registration.token.Token;
+import com.example.demo.registration.token.TokenService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 public class AppUserService implements UserDetailsService {
-
+    private final TokenService tokenService;
     private final AppUserRepository userRepository;
+    @Autowired
+    private EmailService emailService;
+
     private static final String USER_NOT_FOUND="User with email %s not Found";
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -23,7 +33,17 @@ public class AppUserService implements UserDetailsService {
         if(userRepository.findByEmail(appUser.getEmail()).isPresent()){
             throw new IllegalStateException(String.format("User with email : %s already exist",appUser.getEmail()));
         }
-        return  userRepository.save(appUser);
+        AppUser result=userRepository.save(appUser);
+
+        String tokenValue = UUID.randomUUID().toString();
+        Token token=new Token();
+        token.setToken(tokenValue);
+        token.setAppUser(appUser);
+        token.setCreated(LocalDateTime.now());
+        token.setExpires(LocalDateTime.now().plusMinutes(15));
+        tokenService.saveToken(token);
+        emailService.sendEmail(result.getEmail(),tokenValue);
+        return  result;
     }
 
 }
