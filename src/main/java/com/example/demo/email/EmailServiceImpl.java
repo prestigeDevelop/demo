@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 public class EmailServiceImpl implements EmailService{
     @Override
     public void sendEmail(String to, String token) {
-        String url="http://localhost:8080/api/v1/registration/"+token;
-        System.out.println(url);
+        String url="http://localhost:8081/api/v1/registration/userConfirmed/"+token;
+        System.out.println("click this link to confirm activate your account: "+url);
     }
 }

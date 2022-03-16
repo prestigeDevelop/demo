@@ -26,7 +26,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private TokenService tokenService;
 
     @Override
-    public AppUser register(RegistrationRequest request) {
+    public AppUser register(RegistrationRequest request) throws IllegalStateException{
      AppUser  user = null;
         if (emailValidator.test(request.getEmail())) {
             AppUser appUser = new AppUser();

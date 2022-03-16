@@ -21,6 +21,7 @@ public class AppUser implements UserDetails {
     private Long id;
     private String firstName;
     private String LastName;
+    @Column(unique = true,nullable = false)
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
@@ -30,7 +31,7 @@ public class AppUser implements UserDetails {
 
     public AppUser(String firstName, String lastName, String email, String password, AppUserRole appUserRole) {
         this.firstName = firstName;
-        LastName = lastName;
+        this.LastName = lastName;
         this.email = email;
         this.password = password;
         this.appUserRole = appUserRole;

@@ -9,8 +9,9 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
-
+@Builder
 public class Token {
 
     @Id

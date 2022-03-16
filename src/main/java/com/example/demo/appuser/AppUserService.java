@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AppUserService implements UserDetailsService {
     private final TokenService tokenService;
-    private final AppUserRepository userRepository;
+    private @Autowired AppUserRepository userRepository;
     @Autowired
     private EmailService emailService;
 
@@ -28,10 +28,14 @@ public class AppUserService implements UserDetailsService {
                 orElseThrow(()->new UsernameNotFoundException(String.format(USER_NOT_FOUND,email)));
     }
 
-    public  AppUser signUpUser(AppUser appUser){
-
+    public  AppUser signUpUser(AppUser appUser) throws IllegalStateException{
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         if(userRepository.findByEmail(appUser.getEmail()).isPresent()){
-            throw new IllegalStateException(String.format("User with email : %s already exist",appUser.getEmail()));
+            throw new IllegalStateException(String.format("User with email %s already exist",appUser.getEmail()));
         }
         AppUser result=userRepository.save(appUser);
 
@@ -40,7 +44,7 @@ public class AppUserService implements UserDetailsService {
         token.setToken(tokenValue);
         token.setAppUser(appUser);
         token.setCreated(LocalDateTime.now());
-        token.setExpires(LocalDateTime.now().plusMinutes(15));
+        token.setExpires(LocalDateTime.now().plusMinutes(1));
         tokenService.saveToken(token);
         emailService.sendEmail(result.getEmail(),tokenValue);
         return  result;
