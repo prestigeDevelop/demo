@@ -58,13 +58,13 @@ class AppUserServiceTest {
 
     @Test
     void signUpUser() {
-        when(userRepository.findByEmail(any(String.class)))
-                .thenReturn(Optional.empty());
+//        when(userRepository.findByEmail(any(String.class)))
+//                .thenReturn(Optional.empty());
         when(userRepository.save(any(AppUser.class)))
                 .thenReturn(getAppUser().orElse(null));
 
        // doNothing().when(tokenService).saveToken(getToken());
-        doNothing().when(emailService).sendEmail(any(String.class),any(String.class));
+       // doNothing().when(emailService).sendEmail(any(String.class),any(String.class));
 
         appUserService.signUpUser(getNewAppUser().orElseThrow(IllegalStateException::new));
 
