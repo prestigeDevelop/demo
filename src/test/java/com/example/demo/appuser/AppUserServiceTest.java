@@ -61,12 +61,12 @@ class AppUserServiceTest {
         when(userRepository.findByEmail(any(String.class)))
                 .thenReturn(Optional.empty());
         when(userRepository.save(any(AppUser.class)))
-                .thenReturn(getAppUser().get());
+                .thenReturn(getAppUser().orElse(null));
 
-        doNothing().when(tokenService).saveToken(getToken());
+       // doNothing().when(tokenService).saveToken(getToken());
         doNothing().when(emailService).sendEmail(any(String.class),any(String.class));
 
-        appUserService.signUpUser(getNewAppUser().get());
+        appUserService.signUpUser(getNewAppUser().orElseThrow(IllegalStateException::new));
 
     }
 
@@ -88,7 +88,7 @@ class AppUserServiceTest {
 
     private Token getToken(){
         return Token.builder().
-                token("fa1a926d-6747-4fba-962b-6f42c16784b9").appUser(getNewAppUser().get()).id(123456l)
+                token("fa1a926d-6747-4fba-962b-6f42c16784b9").appUser(getNewAppUser().orElse(null)).id(123456L)
                 .build();
     }
 }
