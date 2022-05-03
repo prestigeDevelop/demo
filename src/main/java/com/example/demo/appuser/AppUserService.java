@@ -3,23 +3,28 @@ package com.example.demo.appuser;
 import com.example.demo.email.EmailService;
 import com.example.demo.registration.token.Token;
 import com.example.demo.registration.token.TokenService;
+import com.example.demo.util.RegistrationException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
+
 @Service
-@AllArgsConstructor
+//@AllArgsConstructor
 public class AppUserService implements UserDetailsService {
-    private final TokenService tokenService;
+    private @Autowired TokenService tokenService;
     private @Autowired AppUserRepository userRepository;
     @Autowired
-    private EmailService emailService;
+    @Qualifier("emailServiceImpl")
+    private EmailService emailServiceImpl;
 
     private static final String USER_NOT_FOUND="User with email %s not Found";
     @Override
@@ -38,7 +43,7 @@ public class AppUserService implements UserDetailsService {
             throw new IllegalStateException(String.format("User with email %s already exist",appUser.getEmail()));
         }
         AppUser result=userRepository.save(appUser);
-
+        Optional.ofNullable(result).orElseThrow(()->new RegistrationException("An internal server error with user:"+appUser.getEmail()));
         String tokenValue = UUID.randomUUID().toString();
         Token token=new Token();
         token.setToken(tokenValue);
@@ -46,7 +51,7 @@ public class AppUserService implements UserDetailsService {
         token.setCreated(LocalDateTime.now());
         token.setExpires(LocalDateTime.now().plusMinutes(1));
         tokenService.saveToken(token);
-        emailService.sendEmail(result.getEmail(),tokenValue);
+        emailServiceImpl.sendEmail(result.getEmail(),tokenValue);
         return  result;
     }
 

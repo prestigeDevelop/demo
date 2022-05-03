@@ -35,6 +35,7 @@ class AppUserRepositoryTest {
 
     @Test
     void findByEmail() {
+        assertEquals(appUserRepository.findByEmailAndName("test@email.com","test").get(),appUser);
         assertEquals(appUserRepository.findByEmail("test@email.com").get(),appUser);
     }
 
